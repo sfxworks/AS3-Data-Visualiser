@@ -4,7 +4,7 @@ package net.sfxworks.dataVisualiser.visualisers
 	 * ...
 	 * @author Samuel Walker
 	 */
-	public class FractalVisualiser implements IVisualiser    
+	public class FractalVisualiser
 	{
 		/**
 		* @infotip FractalVisualiser is for taking formatted data and displaying a pie or doughnut.
