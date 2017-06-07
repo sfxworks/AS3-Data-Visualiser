@@ -22,6 +22,7 @@ package net.sfxworks.dataVisualiser
 		
 		/**
 		* @infotip All nodes this node is linked to. This will usually contain either one or no nodes. However this is a vector for future use for visualising mulitple links between different data.
+		* Nodes will be considered a child whatever they're linked to.
 		*/ 
 		public var link:Vector.<Node>
 		

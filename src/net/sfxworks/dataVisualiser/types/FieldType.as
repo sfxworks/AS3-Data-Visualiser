@@ -25,7 +25,7 @@ package net.sfxworks.dataVisualiser.types
 		
 		/**
 		* @infotip
-		* FieldTypes contains arguments for the PlotProcessor to consume.
+		* FieldTypes contains arguments for the PlotVisualiser to consume.
 		* If you're making a node that wants to compare against two values, those values must follow a certain format.
 		*/ 
 		public function FieldType() 

@@ -41,7 +41,7 @@ package net.sfxworks.dataVisualiser.types
 		
 		/**
 		 * @infotip PlotType contains arguments for the PlotVisualiser to consume.
-		 * Once the PlotProcessor has processed the data, pass one of these arguments to the PlotVisualiser for display.
+		 * Once the PlotVisualiser has processed the data, pass one of these arguments to the PlotVisualiser for display.
 		 */ 
 		public function PlotType() 
 		{
