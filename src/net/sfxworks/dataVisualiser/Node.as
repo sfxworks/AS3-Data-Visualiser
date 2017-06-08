@@ -1,16 +1,17 @@
 package net.sfxworks.dataVisualiser 
 {
+	import flash.display.Sprite;
 	/**
 	 * ...
 	 * @author Samuel Walker
 	 */
-	public class Node 
+	public class Node extends Sprite
 	{
 		
-		/**
+		/*
 		* @infotip The name of the node. Optional but used by visualisers on focus.
-		*/ 
 		public var name:String;
+		*/
 		
 		/**
 		* @infotip Data pertaining to the node. Field data would go in here with 'f1' and 'f2' being the defaults.
@@ -22,7 +23,7 @@ package net.sfxworks.dataVisualiser
 		
 		/**
 		* @infotip All nodes this node is linked to. This will usually contain either one or no nodes. However this is a vector for future use for visualising mulitple links between different data.
-		* Nodes will be considered a child whatever they're linked to.
+		* Nodes will be considered a parent whatever they're linked to.
 		*/ 
 		public var link:Vector.<Node>
 		
@@ -31,7 +32,7 @@ package net.sfxworks.dataVisualiser
 		*/ 
 		public function Node() 
 		{
-			name = new String();
+			super();
 			data = new Object();
 			link = new Vector.<Node>();
 		}

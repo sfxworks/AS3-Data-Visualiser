@@ -25,10 +25,13 @@ package net.sfxworks.dataVisualiser
 			{
 				for (var property:Object in object)
 				{
+					trace("Property = " + property);
+					var node:Node = new Node();
 					if (object[property] is Array) //I would like to believe this can reference an array without a name.
 					{
-						var node:Node = new Node();
-						node.name = property;
+						trace("obj is an array");
+						trace("Node name = " + property);
+						node.name = (property as String);
 						returnVector.push(node);
 						
 						
@@ -39,23 +42,20 @@ package net.sfxworks.dataVisualiser
 					}
 					else
 					{
-						var node:Node = new Node();
-						node.name = property;
+						trace("node is not an array");
+						node.name = (property as String);
 						node.data = object[property];
-						node.link = currentRootNode;
+						node.link.push(currentRootNode);
 						returnVector.push(node);
 						//Looks like object is spelled wrong to me at this point.
 					}
 				}
 			}
+			extract(data);
 			
 			return returnVector;
 		}
 		
-		public static function serializeXML(xml:String):Vector.<Node>
-		{
-			//TODO:
-		}
 	}
 
 }
