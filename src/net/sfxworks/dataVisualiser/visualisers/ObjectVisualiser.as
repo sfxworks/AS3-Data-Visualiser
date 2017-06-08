@@ -10,7 +10,7 @@ package net.sfxworks.dataVisualiser.visualisers
 	 * ...
 	 * @author Samuel Walker
 	 */
-	public class ObjectVisualiser extends Sprite implements IVisualiser
+	public class ObjectVisualiser extends Sprite
 	{
 		/**
 		* @infotip
@@ -43,6 +43,8 @@ package net.sfxworks.dataVisualiser.visualisers
 		{
 			//Save
 			nodeData = node;
+			names = new Vector.<TextField>();
+			values = new Vector.<TextField>();
 			
 			//Set name
 			if (node.name != null)
@@ -57,20 +59,32 @@ package net.sfxworks.dataVisualiser.visualisers
 				var typeTF:TextField = new TextField();
 				var valueTF:TextField = new TextField();
 				typeTF.text = objType;
-				valueTF.text = node.data[typeTF];
+				if (node.data[objType] != null)
+				{
+					valueTF.text = node.data[objType];
+				}
+				else
+				{
+					valueTF.text = "null";
+				}
 				
 				names.push(typeTF);
 				values.push(valueTF);
 			}
 			
+			names.reverse();
+			values.reverse();
+			
 		}
 		
-		public function draw(styles:Object):void
+		public function draw(styles:Object=null, bindToMC:Boolean=false):void
 		{
 			//Draw background
-			this.graphics.beginFill(0x000000, .5);
-			this.graphics.drawRect(0, 0, 50, 50);
+			this.graphics.beginFill(0xCCCCCC, 1);
+			this.graphics.drawRect(0, 0, 250, 15);
 			this.graphics.endFill();
+			
+			var setWidth:int = this.width;
 			
 			var spacing:int = 20;
 			var textFormat:TextFormat = new TextFormat();
@@ -79,11 +93,14 @@ package net.sfxworks.dataVisualiser.visualisers
 			for (var i:int = 0; i < names.length; i++)
 			{
 				names[i].setTextFormat(textFormat);
-				names[i].x = this.width * 0.25;
+				names[i].width = 55;
+				names[i].height = names[i].textHeight + names[i].textHeight * 0.4;
+				names[i].border = true;
+				names[i].x = setWidth * 0.1;
 				names[i].y = spacing * i + spacing;
 				
 				values[i].setTextFormat(textFormat);
-				values[i].x = this.width * 0.75;
+				values[i].x = setWidth * 0.60;
 				values[i].y = spacing * i + spacing;
 				
 				if (_editable)
@@ -91,6 +108,13 @@ package net.sfxworks.dataVisualiser.visualisers
 					names[i].type = TextFieldType.INPUT;
 					values[i].type = TextFieldType.INPUT;
 				}
+				
+				addChild(names[i]);
+				addChild(values[i]);
+				
+				this.graphics.beginFill(0xDDDDDD, 1);
+				this.graphics.drawRect(0, 15, 250, this.height + spacing);
+				this.graphics.endFill();
 			}
 		}
 		
