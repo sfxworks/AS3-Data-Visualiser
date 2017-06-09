@@ -102,6 +102,9 @@ package net.sfxworks.dataVisualiser.visualisers
 			//Set Title
 			var title:TextField = new TextField();
 			title.text = nodeData.data.type + ":" + nodeData.name;
+			trace("Font format and all = " + stylesToUse);
+			trace("Font format and all = " + stylesToUse.header);
+			
 			title.setTextFormat(stylesToUse.header);
 			title.width = stylesToUse.width;
 			title.x = 0;

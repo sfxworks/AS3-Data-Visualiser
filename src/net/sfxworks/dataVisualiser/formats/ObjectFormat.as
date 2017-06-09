@@ -30,9 +30,11 @@ package net.sfxworks.dataVisualiser.formats
 		{
 			this.width = width;
 			this.height = height;
+			this.header = header;
 			this.body = body;
 			this.headerColor = headerColor;
 			this.bodyColor = bodyColor;
+			
 			
 			if (width == -1)
 				this.width = 250;
