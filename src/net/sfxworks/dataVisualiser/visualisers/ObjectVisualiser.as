@@ -6,6 +6,7 @@ package net.sfxworks.dataVisualiser.visualisers
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import net.sfxworks.dataVisualiser.Node;
+	import net.sfxworks.dataVisualiser.formats.ObjectFormat;
 	/**
 	 * ...
 	 * @author Samuel Walker
@@ -56,20 +57,24 @@ package net.sfxworks.dataVisualiser.visualisers
 			//Set values;
 			for (var objType:String in node.data)
 			{
-				var typeTF:TextField = new TextField();
-				var valueTF:TextField = new TextField();
-				typeTF.text = objType;
-				if (node.data[objType] != null)
+				if (objType != "type")
 				{
-					valueTF.text = node.data[objType];
-				}
-				else
-				{
-					valueTF.text = "null";
+					var typeTF:TextField = new TextField();
+					var valueTF:TextField = new TextField();
+					typeTF.text = objType;
+					if (node.data[objType] != null)
+					{
+						valueTF.text = node.data[objType];
+					}
+					else
+					{
+						valueTF.text = "null";
+					}
+					
+					names.push(typeTF);
+					values.push(valueTF);
 				}
 				
-				names.push(typeTF);
-				values.push(valueTF);
 			}
 			
 			names.reverse();
@@ -77,31 +82,52 @@ package net.sfxworks.dataVisualiser.visualisers
 			
 		}
 		
-		public function draw(styles:Object=null, bindToMC:Boolean=false):void
+		
+		
+		public function draw(styles:ObjectFormat=null, bindToMC:Boolean=false):void
 		{
+			this.removeChildren();
+			this.graphics.clear();
+			
+			var stylesToUse:ObjectFormat;
+			if (styles == null)
+			{
+				stylesToUse = new ObjectFormat();
+			}
+			else
+			{
+				stylesToUse = styles;
+			}
+			
+			//Set Title
+			var title:TextField = new TextField();
+			title.text = nodeData.data.type + ":" + nodeData.name;
+			title.setTextFormat(stylesToUse.header);
+			title.width = stylesToUse.width;
+			title.x = 0;
+			title.y = 0;
+			addChild(title);
+			
 			//Draw background
-			this.graphics.beginFill(0xCCCCCC, 1);
-			this.graphics.drawRect(0, 0, 250, 15);
+			this.graphics.moveTo(0, 0);
+			this.graphics.beginFill(stylesToUse.headerColor, 1);
+			this.graphics.drawRect(0, 0, this.width, title.textHeight);
 			this.graphics.endFill();
 			
 			var setWidth:int = this.width;
 			
-			var spacing:int = 20;
-			var textFormat:TextFormat = new TextFormat();
-			textFormat.align = TextFormatAlign.CENTER;
-			
 			for (var i:int = 0; i < names.length; i++)
 			{
-				names[i].setTextFormat(textFormat);
-				names[i].width = 55;
+				names[i].setTextFormat(stylesToUse.body);
+				names[i].width = this.width / 2;
 				names[i].height = names[i].textHeight + names[i].textHeight * 0.4;
-				names[i].border = true;
-				names[i].x = setWidth * 0.1;
-				names[i].y = spacing * i + spacing;
+				names[i].x = 0;
+				names[i].y = (stylesToUse.spacing + names[i].textHeight) * i + title.textHeight;
 				
-				values[i].setTextFormat(textFormat);
-				values[i].x = setWidth * 0.60;
-				values[i].y = spacing * i + spacing;
+				values[i].setTextFormat(stylesToUse.body);
+				values[i].width = this.width / 2;
+				values[i].x = this.width / 2;
+				values[i].y = (stylesToUse.spacing + names[i].textHeight) * i + title.textHeight;
 				
 				if (_editable)
 				{
@@ -112,8 +138,16 @@ package net.sfxworks.dataVisualiser.visualisers
 				addChild(names[i]);
 				addChild(values[i]);
 				
-				this.graphics.beginFill(0xDDDDDD, 1);
-				this.graphics.drawRect(0, 15, 250, this.height + spacing);
+				this.graphics.beginFill(stylesToUse.bodyColor, 1);
+				if (stylesToUse.height == 0)
+				{
+					this.graphics.drawRect(0, title.textHeight, stylesToUse.width, names[names.length -1].y + stylesToUse.spacing);
+				}
+				else
+				{
+					this.graphics.drawRect(0, title.textHeight, stylesToUse.width, stylesToUse.height);
+				}
+				
 				this.graphics.endFill();
 			}
 		}
