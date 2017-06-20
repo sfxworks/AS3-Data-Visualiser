@@ -1,10 +1,12 @@
 package net.sfxworks.dataVisualiser.visualisers 
 {
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
+	import flash.ui.Keyboard;
 	import net.sfxworks.dataVisualiser.Node;
 	import net.sfxworks.dataVisualiser.formats.ObjectFormat;
 	/**
@@ -34,6 +36,8 @@ package net.sfxworks.dataVisualiser.visualisers
 		private var names:Vector.<TextField>;
 		private var values:Vector.<TextField>;
 		
+		public var editCallback:Function;
+		
 		
 		public function ObjectVisualiser() 
 		{
@@ -57,29 +61,25 @@ package net.sfxworks.dataVisualiser.visualisers
 			//Set values;
 			for (var objType:String in node.data)
 			{
-				if (objType != "type")
+				var typeTF:TextField = new TextField();
+				var valueTF:TextField = new TextField();
+				typeTF.text = objType;
+				if (node.data[objType] != null)
 				{
-					var typeTF:TextField = new TextField();
-					var valueTF:TextField = new TextField();
-					typeTF.text = objType;
-					if (node.data[objType] != null)
-					{
-						valueTF.text = node.data[objType];
-					}
-					else
-					{
-						valueTF.text = "null";
-					}
-					
-					names.push(typeTF);
-					values.push(valueTF);
+					valueTF.text = node.data[objType];
 				}
+				else
+				{
+					valueTF.text = "null";
+				}
+				
+				names.push(typeTF);
+				values.push(valueTF);
 				
 			}
 			
 			names.reverse();
 			values.reverse();
-			
 		}
 		
 		
@@ -101,9 +101,7 @@ package net.sfxworks.dataVisualiser.visualisers
 			
 			//Set Title
 			var title:TextField = new TextField();
-			title.text = nodeData.data.type + ":" + nodeData.name;
-			trace("Font format and all = " + stylesToUse);
-			trace("Font format and all = " + stylesToUse.header);
+			title.text = nodeData.internalData.type + ":" + nodeData.name;
 			
 			title.setTextFormat(stylesToUse.header);
 			title.width = stylesToUse.width;
@@ -134,8 +132,9 @@ package net.sfxworks.dataVisualiser.visualisers
 				
 				if (_editable)
 				{
-					names[i].type = TextFieldType.INPUT;
 					values[i].type = TextFieldType.INPUT;
+					values[i].name = i.toString();
+					values[i].addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 				}
 				
 				addChild(names[i]);
@@ -152,6 +151,18 @@ package net.sfxworks.dataVisualiser.visualisers
 				}
 				
 				this.graphics.endFill();
+			}
+		}
+		
+		private function handleKeyDown(e:KeyboardEvent):void 
+		{
+			if (e.keyCode == Keyboard.ENTER)
+			{
+				nodeData.data[names[e.target.name].text] = e.target.text;
+				if (editCallback != null)
+				{
+					editCallback(nodeData);
+				}
 			}
 		}
 		
