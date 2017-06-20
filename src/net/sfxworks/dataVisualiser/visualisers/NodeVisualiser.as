@@ -1,6 +1,13 @@
 package net.sfxworks.dataVisualiser.visualisers 
 {
+	import flash.display.Bitmap;
+	import flash.display.BlendMode;
+	import flash.display.Loader;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.net.URLRequest;
+	import flash.text.TextField;
 	import net.sfxworks.dataVisualiser.Node;
 	import net.sfxworks.dataVisualiser.types.NodeType;
 	/**
@@ -12,9 +19,9 @@ package net.sfxworks.dataVisualiser.visualisers
 		
 		private var nodeList:Vector.<Node>;
 		
-		private var spacing:int = 10;
 		private var indentSpacing:int = 0; //x
 		private var nodeLevel:int = 0;
+		private var scale:int;
 		
 		/**
 		* @infotip
@@ -24,11 +31,14 @@ package net.sfxworks.dataVisualiser.visualisers
 		*/ 
 		public function NodeVisualiser() 
 		{
-			
+			//scale = 18;
+			scale = 10;
 		}
 		
 		public function setData(nodes:Vector.<Node>):void
 		{
+			this.removeChildren();
+			nodeLevel = 0;
 			nodeList = nodes;
 		}
 		
@@ -67,11 +77,72 @@ package net.sfxworks.dataVisualiser.visualisers
 		
 		private function drawNode(node:Node):void
 		{
-			var scale:int = 4;
 			//Draw rect.
-			node.graphics.beginFill(0x000000, .5);
-			node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
-			node.graphics.endFill();
+				node.graphics.beginFill(0x000000, .5);
+				node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
+				node.graphics.endFill();
+				
+			if (node.image != null)
+			{
+				
+				var bmp:Bitmap = node.internalData.image as Bitmap;
+				bmp.width = 10 * scale;
+				bmp.height = 10 * scale;
+				bmp.x = 0;
+				bmp.y = 0;
+				addChild(bmp);
+			}
+			else if (node.internalData.imageRef != null)
+			{
+				
+				var imageRef:String = node.internalData.imageRef as String;
+				var urlrq:URLRequest = new URLRequest(imageRef);
+				var l:Loader = new Loader();
+				l.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleLoaderIOError);
+				l.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoaderComplete);
+				l.load(urlrq);
+				node.addChild(l);
+			}
+			else if (node.internalData.nameRef != null)
+			{
+				
+				var tf:TextField = new TextField();
+				//tf.height = 10 * scale;
+				tf.text = node.internalData.nameRef;
+				tf.blendMode = BlendMode.LAYER;
+				tf.selectable = false;
+				//tf.background = true;
+				//tf.backgroundColor = 0xCCCCCC;
+				
+				
+				if (node.internalData.nameRefFont != null)
+				{
+					tf.setTextFormat(node.internalData.nameRefFont);
+				}
+				
+				tf.x = node.width + 10;
+				tf.width = tf.textWidth + 5;
+				
+				tf.y = (node.height / 2) - (tf.textHeight / 2);
+				node.addChild(tf);
+			}
+			else if (node.internalData.nameRefInternal != null)
+			{
+				var tf:TextField = new TextField();
+				tf.text = node.internalData.nameRefInternal;
+				tf.blendMode = BlendMode.LAYER;
+				tf.selectable = false;
+				
+				if (node.internalData.nameRefFont != null)
+				{
+					tf.setTextFormat(node.internalData.nameRefFont);
+				}
+				
+				tf.x = 0;
+				tf.y = (node.height / 2) - (tf.textHeight / 2);
+				node.addChild(tf);
+			}
+			
 			
 			//Draw line
 			node.graphics.beginFill(0x000000, .2);
@@ -83,11 +154,24 @@ package net.sfxworks.dataVisualiser.visualisers
 			
 			node.x = indentSpacing * 10 * scale;
 			node.y = nodeLevel * 10 * scale;
+			
 			nodeLevel++;
 			trace("Drawing node at " + node.x + "||" + node.y);
 			
 			addChild(node);
-			
+		}
+		
+		private function handleLoaderIOError(e:IOErrorEvent):void 
+		{
+			trace("Cant load image, drawing grahic.");
+		}
+		
+		private function handleLoaderComplete(e:Event):void 
+		{
+			e.target.content.width = 10 * scale;
+			e.target.content.height = 10 * scale;
+			e.target.content.x = 0;
+			e.target.content.y = 0;
 		}
 		
 	}

@@ -1,5 +1,6 @@
 package net.sfxworks.dataVisualiser 
 {
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	/**
 	 * ...
@@ -27,6 +28,11 @@ package net.sfxworks.dataVisualiser
 		*/ 
 		public var link:Vector.<Node>
 		
+		public var internalData:Object;
+		
+		public var image:Bitmap;
+		
+		
 		/**
 		* @infotip A node is your basic individual data object that is a core part of display and processing. Nodes can be linked with other nodes and contain properties to display and alter.
 		*/ 
@@ -35,6 +41,7 @@ package net.sfxworks.dataVisualiser
 			super();
 			data = new Object();
 			link = new Vector.<Node>();
+			internalData = new Object();
 		}
 		
 		
