@@ -23,6 +23,8 @@ package net.sfxworks.dataVisualiser.visualisers
 		private var nodeLevel:int = 0;
 		private var scale:int;
 		
+		private var nodesToAdd:Vector.<Node>;
+		
 		/**
 		* @infotip
 		* NodeVisualiser is for taking formatted data and displaying it as an indented layout or a hirarchy. (Think file structures or tournament brackets)
@@ -32,7 +34,7 @@ package net.sfxworks.dataVisualiser.visualisers
 		public function NodeVisualiser() 
 		{
 			//scale = 18;
-			scale = 10;
+			scale = 14;
 		}
 		
 		public function setData(nodes:Vector.<Node>):void
@@ -52,7 +54,14 @@ package net.sfxworks.dataVisualiser.visualisers
 					
 					break;
 				case NodeType.INDENT:
+					//nodeList.reverse();
+					nodesToAdd = new Vector.<Node>();
 					diveNode(nodeList);
+					nodesToAdd.reverse();
+					for each (var node:Node in nodesToAdd)
+					{
+						addChild(node);
+					}
 					break;
 			}
 		}
@@ -77,11 +86,8 @@ package net.sfxworks.dataVisualiser.visualisers
 		
 		private function drawNode(node:Node):void
 		{
-			//Draw rect.
-				node.graphics.beginFill(0x000000, .5);
-				node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
-				node.graphics.endFill();
-				
+			
+			
 			if (node.image != null)
 			{
 				
@@ -95,6 +101,12 @@ package net.sfxworks.dataVisualiser.visualisers
 			else if (node.internalData.imageRef != null)
 			{
 				
+				//Draw rect.
+				node.graphics.moveTo(0, 0);
+				node.graphics.beginFill(0x000000, .5);
+				node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
+				node.graphics.endFill();
+				
 				var imageRef:String = node.internalData.imageRef as String;
 				var urlrq:URLRequest = new URLRequest(imageRef);
 				var l:Loader = new Loader();
@@ -105,6 +117,12 @@ package net.sfxworks.dataVisualiser.visualisers
 			}
 			else if (node.internalData.nameRef != null)
 			{
+				
+				//Draw rect.
+				node.graphics.moveTo(0, 0);
+				node.graphics.beginFill(0x000000, .5);
+				node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
+				node.graphics.endFill();
 				
 				var tf:TextField = new TextField();
 				//tf.height = 10 * scale;
@@ -128,10 +146,19 @@ package net.sfxworks.dataVisualiser.visualisers
 			}
 			else if (node.internalData.nameRefInternal != null)
 			{
+				
 				var tf:TextField = new TextField();
 				tf.text = node.internalData.nameRefInternal;
 				tf.blendMode = BlendMode.LAYER;
 				tf.selectable = false;
+				tf.width = 10 * scale;
+				//tf.border = true;
+				//tf.borderColor = 0x000000;
+				
+				node.graphics.moveTo(0, 0);
+				node.graphics.lineStyle(1, 0x000000, 1);
+				node.graphics.drawRect(0, 0, 10 * scale, 10 * scale);
+				node.graphics.lineStyle();
 				
 				if (node.internalData.nameRefFont != null)
 				{
@@ -139,10 +166,15 @@ package net.sfxworks.dataVisualiser.visualisers
 				}
 				
 				tf.x = 0;
-				tf.y = (node.height / 2) - (tf.textHeight / 2);
+				tf.y = (node.height / 2) - (tf.textHeight / 2 );
 				node.addChild(tf);
 			}
 			
+			node.x = indentSpacing * 10 * scale;
+			node.y = nodeLevel * 10 * scale;
+			
+			nodeLevel++;
+			trace("Drawing node at " + node.x + "||" + node.y);
 			
 			//Draw line
 			node.graphics.beginFill(0x000000, .2);
@@ -152,18 +184,14 @@ package net.sfxworks.dataVisualiser.visualisers
 			node.graphics.lineTo( -5 * scale, -5 * scale);
 			node.graphics.endFill();
 			
-			node.x = indentSpacing * 10 * scale;
-			node.y = nodeLevel * 10 * scale;
 			
-			nodeLevel++;
-			trace("Drawing node at " + node.x + "||" + node.y);
-			
-			addChild(node);
+			nodesToAdd.push(node);
+			//addChild(node);
 		}
 		
 		private function handleLoaderIOError(e:IOErrorEvent):void 
 		{
-			trace("Cant load image, drawing grahic.");
+			//trace("Cant load image, drawing grahic.");
 		}
 		
 		private function handleLoaderComplete(e:Event):void 
